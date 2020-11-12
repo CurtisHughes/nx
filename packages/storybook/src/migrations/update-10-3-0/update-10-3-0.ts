@@ -13,6 +13,7 @@ import {
 } from '@nrwl/workspace';
 
 import { getTsConfigContent, isFramework } from '../../utils/utils';
+import { normalize } from 'path';
 
 interface ProjectDefinition {
   root: string;
@@ -53,11 +54,12 @@ function updateLintTarget(
   const architect = options.projectConfig.architect;
 
   const paths = {
-    tsConfig: path.join(options.projectConfig.root, 'tsconfig.json'),
-    tsConfigLib: path.join(options.projectConfig.root, 'tsconfig.lib.json'),
-    tsConfigStorybook: path.join(
-      options.projectConfig.root,
-      '.storybook/tsconfig.json'
+    tsConfig: normalize(path.join(options.projectConfig.root, 'tsconfig.json')),
+    tsConfigLib: normalize(
+      path.join(options.projectConfig.root, 'tsconfig.lib.json')
+    ),
+    tsConfigStorybook: normalize(
+      path.join(options.projectConfig.root, '.storybook/tsconfig.json')
     ),
   };
 
@@ -102,7 +104,9 @@ function updateLintTarget(
       (ref) => ref.path !== './.storybook/tsconfig.json'
     )
   ) {
-    tsConfig.main.references.push({ path: './.storybook/tsconfig.json' });
+    tsConfig.main.references.push({
+      path: normalize('./.storybook/tsconfig.json'),
+    });
     tree.overwrite(paths.tsConfig, serializeJson(tsConfig.main));
   }
 
